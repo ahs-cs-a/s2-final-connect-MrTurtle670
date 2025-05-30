@@ -14,6 +14,11 @@ public class Board  {
         this.rows = rows;
         this.cols = cols;
         grid = new Player[rows][cols];
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                grid[r][c] = null;
+            }
+        }
         // set each cell of the board to null (empty).
         reset();
 
