@@ -1,0 +1,382 @@
+const pptxgen = require("pptxgenjs");
+
+const pres = new pptxgen();
+pres.layout = "LAYOUT_16x9";
+pres.title = "Euler's Method";
+
+// Color palette: deep navy + teal accent + white
+const NAVY = "0D1B2A";
+const TEAL = "00B4D8";
+const LTBLUE = "90E0EF";
+const WHITE = "FFFFFF";
+const OFFWHITE = "F0F4F8";
+const GRAY = "64748B";
+const ACCENT = "06D6A0";
+
+function titleSlide() {
+const s = pres.addSlide();
+s.background = { color: NAVY };
+// Big teal accent bar on left
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 0.18, h: 5.625, fill: { color: TEAL } });
+// Decorative circle
+s.addShape(pres.shapes.OVAL, { x: 7.5, y: -0.5, w: 4, h: 4, fill: { color: "0D2A3A" }, line: { color: "0D2A3A" } });
+s.addShape(pres.shapes.OVAL, { x: 7.8, y: 2.8, w: 2.5, h: 2.5, fill: { color: "0A2233" }, line: { color: "0A2233" } });
+
+s.addText("EULER'S METHOD", {
+x: 0.5, y: 1.0, w: 7, h: 1.1,
+fontSize: 48, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+s.addText("Numerical Solutions to Differential Equations", {
+x: 0.5, y: 2.2, w: 7.5, h: 0.6,
+fontSize: 20, color: LTBLUE, fontFace: "Calibri", margin: 0
+});
+s.addShape(pres.shapes.RECTANGLE, { x: 0.5, y: 2.95, w: 3.5, h: 0.05, fill: { color: TEAL }, line: { color: TEAL } });
+s.addText("AP Calculus | Lesson Presentation Project", {
+x: 0.5, y: 3.2, w: 7, h: 0.5,
+fontSize: 14, color: GRAY, fontFace: "Calibri", margin: 0
+});
+// Formula hint
+s.addText("y_{n+1} = y_n + h · f(x_n, y_n)", {
+x: 0.5, y: 4.3, w: 6, h: 0.6,
+fontSize: 16, color: ACCENT, fontFace: "Consolas", italic: true, margin: 0
+});
+}
+
+function slide2() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("What is Euler's Method?", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+// Two column layout
+// Left: text
+s.addShape(pres.shapes.RECTANGLE, { x: 0.3, y: 1.15, w: 5.5, h: 3.9, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 6, offset: 2, angle: 135, color: "000000", opacity: 0.08 } });
+s.addText([
+{ text: "Definition\n", options: { bold: true, color: NAVY, fontSize: 15, breakLine: false } },
+{ text: "Euler's Method is a numerical technique for approximating solutions to differential equations (ODEs) when an exact solution is difficult or impossible to find.\n\n", options: { color: "1E293B", fontSize: 13, breakLine: false } },
+{ text: "Named After\n", options: { bold: true, color: NAVY, fontSize: 15, breakLine: false } },
+{ text: "Leonhard Euler (1707–1783), one of the greatest mathematicians in history.\n\n", options: { color: "1E293B", fontSize: 13, breakLine: false } },
+{ text: "Core Idea\n", options: { bold: true, color: NAVY, fontSize: 15, breakLine: false } },
+{ text: "Use the slope (derivative) at a known point to step forward and estimate the next point on the solution curve.", options: { color: "1E293B", fontSize: 13 } },
+], { x: 0.5, y: 1.3, w: 5.1, h: 3.6, valign: "top", fontFace: "Calibri" });
+
+// Right: formula box
+s.addShape(pres.shapes.RECTANGLE, { x: 6.1, y: 1.15, w: 3.6, h: 1.5, fill: { color: NAVY }, line: { color: NAVY }, shadow: { type: "outer", blur: 8, offset: 3, angle: 135, color: "000000", opacity: 0.15 } });
+s.addText("The Formula", { x: 6.1, y: 1.2, w: 3.6, h: 0.45, fontSize: 14, bold: true, color: TEAL, align: "center", fontFace: "Arial", margin: 0 });
+s.addText("y_{n+1} = y_n + h·f(x_n,y_n)", { x: 6.1, y: 1.65, w: 3.6, h: 0.7, fontSize: 17, bold: true, color: WHITE, align: "center", fontFace: "Consolas", margin: 0 });
+
+s.addShape(pres.shapes.RECTANGLE, { x: 6.1, y: 2.85, w: 3.6, h: 2.2, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 } });
+s.addText([
+{ text: "Variables:\n", options: { bold: true, color: NAVY, fontSize: 13 } },
+{ text: "h = step size\n", options: { color: "1E293B", fontSize: 12, bullet: true } },
+{ text: "xₙ = current x value\n", options: { color: "1E293B", fontSize: 12, bullet: true } },
+{ text: "yₙ = current y value\n", options: { color: "1E293B", fontSize: 12, bullet: true } },
+{ text: "f(x,y) = dy/dx", options: { color: "1E293B", fontSize: 12, bullet: true } },
+], { x: 6.2, y: 2.9, w: 3.4, h: 2.0, valign: "top", fontFace: "Calibri" });
+}
+
+function slide3() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("How It Fits the Curriculum", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const topics = [
+{ icon: "1", title: "Differential Equations", desc: "Euler's Method solves dy/dx = f(x,y), connecting to separation of variables and slope fields." },
+{ icon: "2", title: "Slope Fields", desc: "Both use f(x,y) as the slope; Euler's Method follows the slope field one step at a time." },
+{ icon: "3", title: "Derivatives & Tangent Lines", desc: "Each Euler step is a tangent line approximation — a direct application of linear approximation." },
+{ icon: "4", title: "Limits & Accuracy", desc: "As step size h → 0, Euler's approximation approaches the exact solution (Riemann sum parallel)." },
+];
+
+topics.forEach((t, i) => {
+const col = i % 2;
+const row = Math.floor(i / 2);
+const x = 0.3 + col * 4.85;
+const y = 1.2 + row * 2.1;
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 4.5, h: 1.85, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 5, offset: 2, angle: 135, color: "000000", opacity: 0.08 } });
+s.addShape(pres.shapes.OVAL, { x: x + 0.15, y: y + 0.15, w: 0.55, h: 0.55, fill: { color: TEAL }, line: { color: TEAL } });
+s.addText(t.icon, { x: x + 0.15, y: y + 0.15, w: 0.55, h: 0.55, fontSize: 16, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0 });
+s.addText(t.title, { x: x + 0.8, y: y + 0.15, w: 3.6, h: 0.45, fontSize: 14, bold: true, color: NAVY, fontFace: "Arial", margin: 0 });
+s.addText(t.desc, { x: x + 0.15, y: y + 0.7, w: 4.2, h: 1.0, fontSize: 11.5, color: "334155", fontFace: "Calibri", margin: 0 });
+});
+}
+
+function slide4() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Step-by-Step Process", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const steps = [
+{ n: "1", title: "Identify the ODE", desc: 'Write dy/dx = f(x, y). Example: dy/dx = x + y' },
+{ n: "2", title: "Set Initial Condition", desc: "Start at known point (x₀, y₀). Example: y(0) = 1" },
+{ n: "3", title: "Choose Step Size h", desc: "Smaller h = more accurate. Example: h = 0.1" },
+{ n: "4", title: "Calculate Slope", desc: "Find f(xₙ, yₙ) — the slope at the current point" },
+{ n: "5", title: "Step Forward", desc: "yₙ₊₁ = yₙ + h · f(xₙ, yₙ) and xₙ₊₁ = xₙ + h" },
+{ n: "6", title: "Repeat", desc: "Use new (x, y) as the next starting point and repeat" },
+];
+
+steps.forEach((st, i) => {
+const col = i % 3;
+const row = Math.floor(i / 2);
+const x = 0.25 + col * 3.25;
+const y = 1.15 + row * 2.1;
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 3.0, h: 1.85, fill: { color: WHITE }, line: { color: TEAL, pt: 2 }, shadow: { type: "outer", blur: 4, offset: 2, angle: 135, color: "000000", opacity: 0.07 } });
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 3.0, h: 0.45, fill: { color: TEAL }, line: { color: TEAL } });
+s.addText(`Step ${st.n}: ${st.title}`, { x: x + 0.08, y: y + 0.05, w: 2.84, h: 0.38, fontSize: 12, bold: true, color: WHITE, fontFace: "Arial", margin: 0 });
+s.addText(st.desc, { x: x + 0.1, y: y + 0.55, w: 2.8, h: 1.2, fontSize: 11.5, color: "1E293B", fontFace: "Calibri", margin: 0 });
+});
+}
+
+function slide5() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Worked Example #1 — Basic ODE", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 28, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+// Problem statement
+s.addShape(pres.shapes.RECTANGLE, { x: 0.3, y: 1.1, w: 9.4, h: 0.65, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Given: dy/dx = x + y, y(0) = 1, h = 0.5. Approximate y(1).", {
+x: 0.4, y: 1.15, w: 9.2, h: 0.55, fontSize: 14, bold: true, color: TEAL, fontFace: "Consolas", margin: 0
+});
+
+// Table
+const tableData = [
+[{ text: "n", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "xₙ", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "yₙ", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "f(xₙ,yₙ) = xₙ+yₙ", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "yₙ₊₁ = yₙ + 0.5·f", options: { bold: true, color: WHITE, fill: { color: NAVY } } }],
+["0", "0.0", "1.0000", "0 + 1 = 1.0", "1 + 0.5(1) = 1.5"],
+["1", "0.5", "1.5000", "0.5 + 1.5 = 2.0", "1.5 + 0.5(2) = 2.5"],
+[{ text: "2", options: { bold: true } }, { text: "1.0", options: { bold: true } }, { text: "2.5000", options: { bold: true, color: TEAL } }, { text: "— (final)", options: { bold: true } }, { text: "y(1) ≈ 2.5", options: { bold: true, color: ACCENT } }],
+];
+
+s.addTable(tableData, {
+x: 0.3, y: 1.95, w: 9.4, h: 1.8,
+fontSize: 13, fontFace: "Calibri",
+border: { pt: 1, color: "CBD5E1" },
+fill: { color: WHITE },
+colW: [0.6, 1.2, 1.4, 3.3, 2.9],
+});
+
+// Note box
+s.addShape(pres.shapes.RECTANGLE, { x: 0.3, y: 3.95, w: 9.4, h: 1.35, fill: { color: "EFF6FF" }, line: { color: TEAL, pt: 1.5 } });
+s.addText([
+{ text: "Key Insight: ", options: { bold: true, color: NAVY } },
+{ text: "The exact solution to this ODE is y = 2eˣ − x − 1, giving y(1) = 2e − 2 ≈ 3.436. Euler's result of 2.5 is an underestimate because the function is concave up (convex). A smaller step size h would give a more accurate answer.", options: { color: "1E293B" } }
+], { x: 0.5, y: 4.0, w: 9.0, h: 1.2, fontSize: 12, fontFace: "Calibri" });
+}
+
+function slide6() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Examples #2–5 — More ODEs", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 28, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const examples = [
+{
+num: "2", ode: "dy/dx = 2x, y(0)=0, h=0.5",
+steps: "Step 1: f(0,0)=0 → y₁=0+0.5(0)=0\nStep 2: f(0.5,0)=1 → y₂=0+0.5(1)=0.5\nApprox y(1) ≈ 0.5 (Exact: 1.0)",
+note: "Linear ODE; Euler underestimates"
+},
+{
+num: "3", ode: "dy/dx = y, y(0)=1, h=0.5",
+steps: "Step 1: f(0,1)=1 → y₁=1+0.5(1)=1.5\nStep 2: f(0.5,1.5)=1.5 → y₂=1.5+0.5(1.5)=2.25\nApprox y(1) ≈ 2.25 (Exact: e ≈ 2.718)",
+note: "Exponential growth ODE"
+},
+{
+num: "4", ode: "dy/dx = -y, y(0)=2, h=0.5",
+steps: "Step 1: f(0,2)=-2 → y₁=2+0.5(-2)=1\nStep 2: f(0.5,1)=-1 → y₂=1+0.5(-1)=0.5\nApprox y(1) ≈ 0.5 (Exact: 2e⁻¹ ≈ 0.736)",
+note: "Exponential decay"
+},
+{
+num: "5", ode: "dy/dx = x², y(1)=0, h=0.5",
+steps: "Step 1: f(1,0)=1 → y₁=0+0.5(1)=0.5\nStep 2: f(1.5,0.5)=2.25 → y₂=0.5+0.5(2.25)=1.625\nApprox y(2) ≈ 1.625 (Exact: 7/3≈2.333)",
+note: "Polynomial ODE"
+},
+];
+
+examples.forEach((ex, i) => {
+const col = i % 2;
+const row = Math.floor(i / 2);
+const x = 0.25 + col * 4.9;
+const y = 1.1 + row * 2.2;
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 4.6, h: 2.0, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 4, offset: 2, angle: 135, color: "000000", opacity: 0.07 } });
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 4.6, h: 0.42, fill: { color: TEAL }, line: { color: TEAL } });
+s.addText(`Example ${ex.num}: ${ex.ode}`, { x: x + 0.1, y: y + 0.06, w: 4.4, h: 0.34, fontSize: 11.5, bold: true, color: WHITE, fontFace: "Consolas", margin: 0 });
+s.addText(ex.steps, { x: x + 0.12, y: y + 0.5, w: 4.36, h: 1.0, fontSize: 10.5, color: "1E293B", fontFace: "Calibri", margin: 0 });
+s.addShape(pres.shapes.RECTANGLE, { x, y: y + 1.55, w: 4.6, h: 0.38, fill: { color: "F0FDF4" }, line: { color: ACCENT, pt: 1 } });
+s.addText(`★ ${ex.note}`, { x: x + 0.1, y: y + 1.59, w: 4.4, h: 0.3, fontSize: 10, color: "166534", bold: true, fontFace: "Calibri", margin: 0 });
+});
+}
+
+function slide7() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Accuracy & Error Analysis", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+// Step size comparison chart (as a table visual)
+s.addShape(pres.shapes.RECTANGLE, { x: 0.3, y: 1.1, w: 5.4, h: 4.2, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 5, offset: 2, angle: 135, color: "000000", opacity: 0.08 } });
+s.addText("Effect of Step Size h on y(1) for dy/dx = y, y(0)=1", { x: 0.4, y: 1.15, w: 5.2, h: 0.45, fontSize: 11, bold: true, color: NAVY, fontFace: "Arial", align: "center" });
+
+// Mini table
+const compTable = [
+[{ text: "Step Size h", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Approx y(1)", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Error vs e", options: { bold: true, color: WHITE, fill: { color: NAVY } } }],
+["h = 1.0", "2.000", "0.718 (26%)"],
+["h = 0.5", "2.250", "0.468 (17%)"],
+["h = 0.25", "2.441", "0.277 (10%)"],
+["h = 0.1", "2.594", "0.124 (4.6%)"],
+[{ text: "h → 0", options: { bold: true } }, { text: "→ e ≈ 2.718", options: { bold: true, color: ACCENT } }, { text: "→ 0%", options: { bold: true, color: ACCENT } }],
+];
+s.addTable(compTable, {
+x: 0.4, y: 1.65, w: 5.2, h: 2.8,
+fontSize: 12, fontFace: "Calibri",
+border: { pt: 1, color: "CBD5E1" },
+fill: { color: WHITE },
+colW: [1.7, 1.75, 1.75],
+});
+
+// Right side: error facts
+s.addShape(pres.shapes.RECTANGLE, { x: 5.9, y: 1.1, w: 3.8, h: 4.2, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 5, offset: 2, angle: 135, color: "000000", opacity: 0.08 } });
+s.addText("Error Properties", { x: 5.95, y: 1.15, w: 3.7, h: 0.45, fontSize: 14, bold: true, color: NAVY, fontFace: "Arial", align: "center" });
+s.addText([
+{ text: "Global Error is O(h)\n", options: { bold: true, color: TEAL, fontSize: 13, breakLine: true } },
+{ text: "Halving h roughly halves total error\n\n", options: { color: "1E293B", fontSize: 12, breakLine: true } },
+{ text: "Local Truncation Error is O(h²)\n", options: { bold: true, color: TEAL, fontSize: 13, breakLine: true } },
+{ text: "Error per step grows with h²\n\n", options: { color: "1E293B", fontSize: 12, breakLine: true } },
+{ text: "Concave Up Functions\n", options: { bold: true, color: TEAL, fontSize: 13, breakLine: true } },
+{ text: "Euler underestimates (below curve)\n\n", options: { color: "1E293B", fontSize: 12, breakLine: true } },
+{ text: "Concave Down Functions\n", options: { bold: true, color: TEAL, fontSize: 13, breakLine: true } },
+{ text: "Euler overestimates (above curve)", options: { color: "1E293B", fontSize: 12 } },
+], { x: 6.05, y: 1.65, w: 3.6, h: 3.4, valign: "top", fontFace: "Calibri" });
+}
+
+function slide8() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Real-World Applications", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const apps = [
+{ icon: "🚀", title: "Space & Aerospace", desc: "NASA uses numerical ODE solvers (Euler-family) to simulate rocket trajectories and orbital mechanics in real time." },
+{ icon: "💊", title: "Pharmacokinetics", desc: "Drug concentration in the bloodstream follows dy/dt = -ky. Euler's method helps predict dosing schedules." },
+{ icon: "🌡️", title: "Climate Modeling", desc: "Global climate models solve millions of ODEs per time step to simulate temperature and pressure changes." },
+{ icon: "⚡", title: "Electrical Circuits", desc: "Circuit simulators (SPICE) solve V = L·dI/dt numerically using variants of Euler's method at each time step." },
+{ icon: "🦠", title: "Epidemic Modeling", desc: "SIR disease models (dS/dt, dI/dt, dR/dt) use Euler's method to predict infection spread over time." },
+{ icon: "🤖", title: "Robotics & AI", desc: "Robot motion planning integrates acceleration ODEs numerically to predict position and velocity at each tick." },
+];
+
+apps.forEach((app, i) => {
+const col = i % 3;
+const row = Math.floor(i / 3);
+const x = 0.2 + col * 3.27;
+const y = 1.1 + row * 2.15;
+s.addShape(pres.shapes.RECTANGLE, { x, y, w: 3.0, h: 1.9, fill: { color: WHITE }, line: { color: "E2E8F0", pt: 1 }, shadow: { type: "outer", blur: 5, offset: 2, angle: 135, color: "000000", opacity: 0.08 } });
+s.addText(app.icon, { x: x + 0.1, y: y + 0.1, w: 0.6, h: 0.6, fontSize: 24, align: "center" });
+s.addText(app.title, { x: x + 0.72, y: y + 0.15, w: 2.2, h: 0.5, fontSize: 13, bold: true, color: NAVY, fontFace: "Arial", margin: 0 });
+s.addText(app.desc, { x: x + 0.1, y: y + 0.72, w: 2.8, h: 1.1, fontSize: 10.5, color: "334155", fontFace: "Calibri", margin: 0 });
+});
+}
+
+function slide9() {
+const s = pres.addSlide();
+s.background = { color: OFFWHITE };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: NAVY }, line: { color: NAVY } });
+s.addText("Euler's vs. Other Methods", {
+x: 0.4, y: 0.1, w: 9.2, h: 0.8, fontSize: 30, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const compData = [
+[
+{ text: "Method", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Order", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Steps/iter", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Accuracy", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+{ text: "Use Case", options: { bold: true, color: WHITE, fill: { color: NAVY } } },
+],
+[{ text: "Euler's", options: { bold: true, color: TEAL } }, "O(h)", "1", "Low", "Teaching, simple estimates"],
+["Midpoint (RK2)", "O(h²)", "2", "Medium", "Better accuracy needed"],
+["Runge-Kutta 4", "O(h⁴)", "4", "High", "Engineering & science"],
+["Adams-Bashforth", "O(h⁴)", "1*", "High", "Long-time simulations"],
+["Implicit Euler", "O(h)", "1†", "Medium", "Stiff equations"],
+];
+
+s.addTable(compData, {
+x: 0.3, y: 1.15, w: 9.4, h: 3.0,
+fontSize: 13, fontFace: "Calibri",
+border: { pt: 1, color: "CBD5E1" },
+fill: { color: WHITE },
+colW: [2.0, 1.3, 1.5, 1.5, 3.1],
+});
+
+s.addShape(pres.shapes.RECTANGLE, { x: 0.3, y: 4.3, w: 9.4, h: 1.0, fill: { color: "F0F9FF" }, line: { color: TEAL, pt: 1.5 } });
+s.addText([
+{ text: "Why learn Euler's first? ", options: { bold: true, color: NAVY } },
+{ text: "It's the conceptual foundation. RK4 is essentially Euler's method applied 4 times per step with weighted averaging. Understanding Euler's method means you understand ALL numerical ODE solvers.", options: { color: "1E293B" } }
+], { x: 0.5, y: 4.35, w: 9.0, h: 0.9, fontSize: 12, fontFace: "Calibri" });
+}
+
+function slide10() {
+const s = pres.addSlide();
+s.background = { color: NAVY };
+s.addShape(pres.shapes.RECTANGLE, { x: 0, y: 0, w: 0.18, h: 5.625, fill: { color: TEAL }, line: { color: TEAL } });
+s.addShape(pres.shapes.OVAL, { x: 7.2, y: -0.3, w: 3.5, h: 3.5, fill: { color: "0D2A3A" }, line: { color: "0D2A3A" } });
+
+s.addText("Key Takeaways", {
+x: 0.5, y: 0.3, w: 6.5, h: 0.7, fontSize: 34, bold: true, color: WHITE, fontFace: "Arial Black", margin: 0
+});
+
+const points = [
+"Euler's Method approximates ODE solutions using tangent line steps",
+"Formula: y_{n+1} = y_n + h · f(x_n, y_n)",
+"Smaller step size h → more accuracy, but more computation",
+"Error: O(h) globally; concave up = underestimate, concave down = overestimate",
+"Foundation for all modern numerical ODE solvers (RK4, etc.)",
+"Used everywhere: aerospace, medicine, climate, circuits, AI",
+];
+
+points.forEach((pt, i) => {
+const y = 1.15 + i * 0.69;
+s.addShape(pres.shapes.OVAL, { x: 0.45, y: y + 0.06, w: 0.42, h: 0.42, fill: { color: TEAL }, line: { color: TEAL } });
+s.addText(`${i + 1}`, { x: 0.45, y: y + 0.06, w: 0.42, h: 0.42, fontSize: 13, bold: true, color: WHITE, align: "center", valign: "middle", margin: 0 });
+s.addText(pt, { x: 1.05, y: y + 0.08, w: 8.7, h: 0.38, fontSize: 13.5, color: i === 1 ? TEAL : WHITE, fontFace: "Calibri", margin: 0, bold: i === 1 });
+});
+
+s.addShape(pres.shapes.RECTANGLE, { x: 0.45, y: 5.15, w: 9.2, h: 0.3, fill: { color: "0D2A3A" }, line: { color: "0D2A3A" } });
+s.addText("AP Calculus | Euler's Method | Lesson Presentation Project", {
+x: 0.45, y: 5.18, w: 9.2, h: 0.28, fontSize: 10, color: GRAY, align: "center", fontFace: "Calibri", margin: 0
+});
+}
+
+titleSlide();
+slide2();
+slide3();
+slide4();
+slide5();
+slide6();
+slide7();
+slide8();
+slide9();
+slide10();
+
+pres.writeFile({ fileName: "/home/claude/EulersMethod.pptx" }).then(() => {
+console.log("Done: EulersMethod.pptx");
+});
